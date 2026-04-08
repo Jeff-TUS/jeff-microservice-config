@@ -15,6 +15,13 @@ spring:
     console:
       enabled: true
       path: /h2-console
+  
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
+      cache:
+        enabled: false
 
 server:
   port: 8081
@@ -38,7 +45,6 @@ order:
   max-quantity-per-order: 10
   default-status: PENDING
 
-# Resilience4j Configuration - WITHOUT WebClient exceptions
 resilience4j:
   circuitbreaker:
     instances:
@@ -48,18 +54,22 @@ resilience4j:
         wait-duration-in-open-state: 15000ms
         permitted-number-of-calls-in-half-open-state: 3
         minimum-number-of-calls: 5
-        # REMOVED record-exceptions - use defaults
   retry:
     instances:
       product-service:
         max-attempts: 3
-        wait-duration: 500ms
-        # REMOVED retry-exceptions - use defaults
+        wait-duration: 1000ms
+        retry-exceptions:
+          - java.lang.IllegalArgumentException
+          - org.springframework.cloud.client.loadbalancer.ServiceInstanceNotFoundException
+          - java.net.ConnectException
+          - java.io.IOException
 
 logging:
   level:
     ie.tus.jeff.order: DEBUG
     io.github.resilience4j: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
   pattern:
     console: "%d{ISO8601} [%thread] %-5level %logger{36} - [%X{traceId}] - %msg%n"
 
@@ -73,4 +83,4 @@ management:
   endpoints:
     web:
       exposure:
-        include: health,info
+        include: health,info,circuitbreakers
