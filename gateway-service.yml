@@ -44,6 +44,10 @@ logging:
     org.springframework.web: DEBUG
 
 management:
+  endpoints:
+    web:
+      exposure:
+        include: gateway,health,info
   tracing:
     sampling:
       probability: 1.0
