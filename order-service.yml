@@ -34,12 +34,11 @@ eureka:
       network-tier: internal
       exposed: "false"
 
-# Order Service specific configuration
 order:
   max-quantity-per-order: 10
   default-status: PENDING
 
-# Resilience4j Configuration
+# Resilience4j Configuration - WITHOUT WebClient exceptions
 resilience4j:
   circuitbreaker:
     instances:
@@ -49,21 +48,14 @@ resilience4j:
         wait-duration-in-open-state: 15000ms
         permitted-number-of-calls-in-half-open-state: 3
         minimum-number-of-calls: 5
-        record-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException
-          - java.net.ConnectException
-          - java.io.IOException
+        # REMOVED record-exceptions - use defaults
   retry:
     instances:
       product-service:
         max-attempts: 3
         wait-duration: 500ms
-        retry-exceptions:
-          - org.springframework.web.reactive.function.client.WebClientResponseException
-          - java.net.ConnectException
-          - java.io.IOException
+        # REMOVED retry-exceptions - use defaults
 
-# Logging
 logging:
   level:
     ie.tus.jeff.order: DEBUG
@@ -71,7 +63,6 @@ logging:
   pattern:
     console: "%d{ISO8601} [%thread] %-5level %logger{36} - [%X{traceId}] - %msg%n"
 
-# Tracing
 management:
   tracing:
     sampling:
