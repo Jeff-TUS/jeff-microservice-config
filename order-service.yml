@@ -47,9 +47,18 @@ resilience4j:
         wait-duration-in-open-state: 15000ms
         permitted-number-of-calls-in-half-open-state: 3
         minimum-number-of-calls: 5
+      BAD-PRODUCT-SERVICE:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15000ms
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
   retry:
     instances:
       product-service:
+        max-attempts: 3
+        wait-duration: 500ms
+      BAD-PRODUCT-SERVICE:
         max-attempts: 3
         wait-duration: 500ms
 
@@ -67,3 +76,7 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,info
