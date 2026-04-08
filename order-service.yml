@@ -1,4 +1,6 @@
 spring:
+  application:
+    name: order-service
   datasource:
     url: jdbc:h2:mem:orderdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     driver-class-name: org.h2.Driver
@@ -32,22 +34,36 @@ eureka:
       network-tier: internal
       exposed: "false"
 
+# Order Service specific configuration
 order:
   max-quantity-per-order: 10
   default-status: PENDING
 
-resilience:
-  circuit-breaker:
-    failure-threshold: 3
-    timeout-duration: 5s
-    wait-duration-open: 15s
-    sliding-window-size: 5
-    failure-rate-threshold: 50
+# Resilience4j Configuration
+resilience4j:
+  circuitbreaker:
+    instances:
+      product-service:
+        sliding-window-size: 5
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 15000ms
+        permitted-number-of-calls-in-half-open-state: 3
+        minimum-number-of-calls: 5
+        record-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+          - java.net.ConnectException
+          - java.io.IOException
   retry:
-    max-attempts: 3
-    initial-backoff: 500ms
-    multiplier: 2
+    instances:
+      product-service:
+        max-attempts: 3
+        wait-duration: 500ms
+        retry-exceptions:
+          - org.springframework.web.reactive.function.client.WebClientResponseException
+          - java.net.ConnectException
+          - java.io.IOException
 
+# Logging
 logging:
   level:
     ie.tus.jeff.order: DEBUG
@@ -55,6 +71,7 @@ logging:
   pattern:
     console: "%d{ISO8601} [%thread] %-5level %logger{36} - [%X{traceId}] - %msg%n"
 
+# Tracing
 management:
   tracing:
     sampling:
@@ -62,3 +79,7 @@ management:
   zipkin:
     tracing:
       endpoint: http://localhost:9411/api/v2/spans
+  endpoints:
+    web:
+      exposure:
+        include: health,info
