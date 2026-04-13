@@ -2,6 +2,10 @@ server:
   port: 8080
 
 spring:
+  autoconfigure:
+    exclude:
+      - org.springframework.boot.autoconfigure.security.reactive.ReactiveSecurityAutoConfiguration
+      - org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration
   application:
     name: gateway
   cloud:
@@ -53,3 +57,4 @@ management:
   endpoint:
     health:
       show-details: always
+
