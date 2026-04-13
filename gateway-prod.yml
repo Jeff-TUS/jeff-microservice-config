@@ -1,6 +1,13 @@
 logging:
   level:
     org.springframework.cloud.gateway: WARN
+    ie.tus.jeff.gateway: WARN
 
 jwt:
   secret: ${JWT_SECRET}  # Use environment variable in production
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info  # Minimal exposure in production

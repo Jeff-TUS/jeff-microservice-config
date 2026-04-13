@@ -2,3 +2,9 @@ logging:
   level:
     org.springframework.cloud.gateway: DEBUG
     ie.tus.jeff.gateway: DEBUG
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"  # Expose all actuator endpoints in dev
