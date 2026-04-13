@@ -20,7 +20,7 @@ spring:
       path: /h2-console
 
 product-service:
-  name: product-service
+  name: PRODUCT-SERVICE   # Uppercase to match Eureka
 
 jwt:
   secret: mySecretKeyForJWTValidationThatIsAtLeast32CharactersLong
