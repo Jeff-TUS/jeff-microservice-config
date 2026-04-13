@@ -9,15 +9,15 @@ spring:
       discovery:
         locator:
           enabled: true
-          lower-case-service-id: false
+          lower-case-service-id: true
       routes:
         - id: order-service-route
-          uri: lb://ORDER-SERVICE
+          uri: lb://order-service
           predicates:
             - Path=/api/orders/**
 
         - id: product-service-route
-          uri: lb://PRODUCT-SERVICE
+          uri: lb://product-service
           predicates:
             - Path=/api/products/**
 
@@ -36,11 +36,16 @@ eureka:
 
 logging:
   level:
-    org.springframework.cloud.gateway: DEBUG
-    org.springframework.cloud.loadbalancer: DEBUG
+    org.springframework.cloud.gateway: INFO
     ie.tus.jeff.gateway: DEBUG
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
   endpoints:
     web:
       exposure:

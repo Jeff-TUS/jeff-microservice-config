@@ -19,16 +19,30 @@ spring:
       enabled: true
       path: /h2-console
 
+jwt:
+  secret: mySecretKeyForJWTValidationThatIsAtLeast32CharactersLong
+
 eureka:
   instance:
     instance-id: ${spring.application.name}:${random.value}
     prefer-ip-address: true
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+    register-with-eureka: true
+    fetch-registry: true
 
 logging:
   level:
     ie.tus.jeff.productservice: DEBUG
 
 management:
+  tracing:
+    sampling:
+      probability: 1.0
+  zipkin:
+    tracing:
+      endpoint: http://localhost:9411/api/v2/spans
   endpoints:
     web:
       exposure:
@@ -36,5 +50,3 @@ management:
   endpoint:
     health:
       show-details: always
-jwt:
-  secret: mySecretKeyForJWTValidationThatIsAtLeast32CharactersLong

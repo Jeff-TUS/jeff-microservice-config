@@ -1,5 +1,3 @@
-# Common configuration applied to all services across all profiles
-
 eureka:
   client:
     service-url:
@@ -12,7 +10,7 @@ eureka:
 
 logging:
   level:
-    ie.tus.jeff: INFO
+    ie.tus.jeff: DEBUG
     org.springframework.web: INFO
     com.netflix.discovery: WARN
 
