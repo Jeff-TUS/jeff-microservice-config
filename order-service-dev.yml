@@ -1,0 +1,12 @@
+# Development profile - higher logging, lower resilience thresholds for testing
+
+logging:
+  level:
+    ie.tus.jeff.orderservice: TRACE
+
+resilience4j:
+  retry:
+    instances:
+      productService:
+        max-attempts: 2  # Fewer retries for faster dev feedback
+        wait-duration: 500ms

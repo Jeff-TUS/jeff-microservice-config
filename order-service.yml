@@ -1,82 +1,61 @@
+server:
+  port: 8081
+
 spring:
   application:
     name: order-service
   datasource:
-    url: jdbc:h2:mem:orderdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
+    url: jdbc:h2:mem:orderdb
     driver-class-name: org.h2.Driver
     username: sa
     password: 
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
+    database-platform: org.hibernate.dialect.H2Dialect
     show-sql: true
   h2:
     console:
       enabled: true
       path: /h2-console
 
-server:
-  port: 8081
-
-eureka:
-  client:
-    service-url:
-      defaultZone: http://localhost:8761/eureka/
-    register-with-eureka: true
-    fetch-registry: true
-  instance:
-    hostname: localhost
-    prefer-ip-address: false
-    lease-renewal-interval-in-seconds: 10
-    lease-expiration-duration-in-seconds: 30
-    metadata-map:
-      network-tier: internal
-      exposed: "false"
-
-order:
-  max-quantity-per-order: 10
-  default-status: PENDING
+product-service:
+  name: product-service
 
 resilience4j:
   circuitbreaker:
     instances:
-      product-service:
+      productService:
+        register-health-indicator: true
         sliding-window-size: 5
+        minimum-number-of-calls: 3
+        permitted-number-of-calls-in-half-open-state: 2
+        automatic-transition-from-open-to-half-open-enabled: true
+        wait-duration-in-open-state: 10000ms
         failure-rate-threshold: 50
-        wait-duration-in-open-state: 15000ms
-        permitted-number-of-calls-in-half-open-state: 3
-        minimum-number-of-calls: 5
-      BAD-PRODUCT-SERVICE:
-        sliding-window-size: 5
-        failure-rate-threshold: 50
-        wait-duration-in-open-state: 15000ms
-        permitted-number-of-calls-in-half-open-state: 3
-        minimum-number-of-calls: 5
   retry:
     instances:
-      product-service:
+      productService:
         max-attempts: 3
-        wait-duration: 500ms
-      BAD-PRODUCT-SERVICE:
-        max-attempts: 3
-        wait-duration: 500ms
+        wait-duration: 1000ms
+        retry-exceptions:
+          - org.springframework.web.client.ResourceAccessException
+          - java.net.ConnectException
+
+eureka:
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
 
 logging:
   level:
-    ie.tus.jeff.order: DEBUG
-    io.github.resilience4j: DEBUG
-  pattern:
-    console: "%d{ISO8601} [%thread] %-5level %logger{36} - [%X{traceId}] - %msg%n"
+    ie.tus.jeff.orderservice: DEBUG
 
 management:
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
   endpoints:
     web:
       exposure:
-        include: "*"
+        include: health,circuitbreakers,circuitbreakerevents
+  endpoint:
+    health:
+      show-details: always

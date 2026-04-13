@@ -1,0 +1,7 @@
+logging:
+  level:
+    ie.tus.jeff.productservice: WARN
+
+spring:
+  jpa:
+    show-sql: false  # Disable SQL logging in production

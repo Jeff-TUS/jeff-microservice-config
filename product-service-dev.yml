@@ -1,0 +1,3 @@
+logging:
+  level:
+    ie.tus.jeff.productservice: TRACE

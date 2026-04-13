@@ -1,0 +1,18 @@
+# Production profile - optimized settings
+
+logging:
+  level:
+    ie.tus.jeff.orderservice: WARN
+
+resilience4j:
+  retry:
+    instances:
+      productService:
+        max-attempts: 5  # More retries for production
+        wait-duration: 2000ms
+  circuitbreaker:
+    instances:
+      productService:
+        sliding-window-size: 10
+        minimum-number-of-calls: 10
+        failure-rate-threshold: 30

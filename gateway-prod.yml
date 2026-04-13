@@ -1,0 +1,6 @@
+logging:
+  level:
+    org.springframework.cloud.gateway: WARN
+
+jwt:
+  secret: ${JWT_SECRET}  # Use environment variable in production
