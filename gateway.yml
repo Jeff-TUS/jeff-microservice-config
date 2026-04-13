@@ -15,21 +15,11 @@ spring:
           uri: lb://ORDER-SERVICE
           predicates:
             - Path=/api/orders/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: orderServiceCB
-                fallbackUri: forward:/fallback/orders
 
         - id: product-service-route
           uri: lb://PRODUCT-SERVICE
           predicates:
             - Path=/api/products/**
-          filters:
-            - name: CircuitBreaker
-              args:
-                name: productServiceCB
-                fallbackUri: forward:/fallback/products
 
 jwt:
   secret: mySecretKeyForJWTValidationThatIsAtLeast32CharactersLong
@@ -47,19 +37,18 @@ eureka:
 logging:
   level:
     org.springframework.cloud.gateway: INFO
-    ie.tus.jeff.gateway: INFO
 
 management:
   endpoints:
     web:
       exposure:
         include: health,info,gateway
+      base-path: /actuator
   endpoint:
     health:
       show-details: always
-  info:
-    env:
-      enabled: true
+    gateway:
+      enabled: true  # Explicitly enable gateway endpoint
   tracing:
     sampling:
       probability: 1.0
