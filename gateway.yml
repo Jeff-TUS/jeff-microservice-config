@@ -25,33 +25,26 @@ jwt:
   secret: mySecretKeyForJWTValidationThatIsAtLeast32CharactersLong
 
 eureka:
-  instance:
-    instance-id: ${spring.application.name}:${random.value}
-    prefer-ip-address: true
   client:
     service-url:
       defaultZone: http://localhost:8761/eureka
     register-with-eureka: true
     fetch-registry: true
+  instance:
+    instance-id: ${spring.application.name}:${random.value}
+    prefer-ip-address: true
 
 logging:
   level:
-    org.springframework.cloud.gateway: INFO
+    org.springframework.cloud.gateway: DEBUG
+    org.springframework.cloud.loadbalancer: DEBUG
+    ie.tus.jeff.gateway: DEBUG
 
 management:
   endpoints:
     web:
       exposure:
-        include: health,info,gateway
-      base-path: /actuator
+        include: health,info
   endpoint:
     health:
       show-details: always
-    gateway:
-      enabled: true  # Explicitly enable gateway endpoint
-  tracing:
-    sampling:
-      probability: 1.0
-  zipkin:
-    tracing:
-      endpoint: http://localhost:9411/api/v2/spans
